@@ -49,5 +49,15 @@ app.put(baseAPIRoute + '/drivers/:id', (req, res) => {
   res.status(200).send(selectedDriver)
 })
 
+app.delete(baseAPIRoute + '/drivers/:id', (req, res) => {
+  const { id } = req.params;
+  const selectedDriver = drivers.find((d) => d.id === id);
+
+  const index = drivers.indexOf(selectedDriver);
+  drivers.splice(index, 1)
+
+  res.status(200).send(selectedDriver)
+})
+
 const port = 3001;
 app.listen(port, () => console.log('API rodando com sucesso')) 
