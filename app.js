@@ -38,5 +38,16 @@ app.post(baseAPIRoute + '/drivers', (req, res) => {
   res.status(200).send(newDriver)
 })
 
+app.put(baseAPIRoute + '/drivers/:id', (req, res) => {
+  const { id } = req.params
+  const selectedDriver = drivers.find(d => d.id === id)
+  for (const key in selectedDriver) {
+    if (req.body[key]) {
+      selectedDriver[key] = req.body[key];
+    }
+  }
+  res.status(200).send(selectedDriver)
+})
+
 const port = 3001;
 app.listen(port, () => console.log('API rodando com sucesso')) 
