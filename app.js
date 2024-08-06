@@ -1,31 +1,37 @@
-import express from 'express';
-import { drivers } from './data.js'
+import express from "express";
+import { drivers } from "./data.js";
 
-const baseAPIRoute = '/api/v1';
+const baseAPIRoute = "/api/v1";
 
 const app = express();
 
 app.use(express.json());
 
-app.get(baseAPIRoute + '/drivers', (req, res) => {
+app.get(baseAPIRoute + "/drivers", (req, res) => {
   res.status(200).send(drivers);
-})
+});
 
 app.get(baseAPIRoute + "/drivers/standings/:position", (req, res) => {
   const { position } = req.params;
-  const selectedDriver = drivers[position - 1]
+  const selectedDriver = drivers[position - 1];
   res.status(200).send(selectedDriver);
 });
 
 app.get(baseAPIRoute + "/drivers/:id", (req, res) => {
   const { id } = req.params;
-  const selectedDriver = drivers.find((drivers) => drivers.id === id)
+  const selectedDriver = drivers.find((drivers) => drivers.id === id);
+
+  if (!selectedDriver) {
+    res.status(404).send("Driver not found");
+    return;
+  }
+
   res.status(200).send(selectedDriver);
 });
 
-app.post(baseAPIRoute + '/drivers', (req, res) => {
-  const newDriver = {...req.body, id: randomUUID ()}
-  drivers.push(newDriver)
+app.post(baseAPIRoute + "/drivers", (req, res) => {
+  const newDriver = { ...req.body, id: randomUUID() };
+  drivers.push(newDriver);
   drivers.sort((b, a) => {
     if (a.points > b.points) {
       return 1;
@@ -34,30 +40,41 @@ app.post(baseAPIRoute + '/drivers', (req, res) => {
       return 1;
     }
     return 0;
-  })
-  res.status(200).send(newDriver)
-})
+  });
+  res.status(200).send(newDriver);
+});
 
-app.put(baseAPIRoute + '/drivers/:id', (req, res) => {
-  const { id } = req.params
-  const selectedDriver = drivers.find(d => d.id === id)
+app.put(baseAPIRoute + "/drivers/:id", (req, res) => {
+  const { id } = req.params;
+  const selectedDriver = drivers.find((d) => d.id === id);
+
+  if (!selectedDriver) {
+    res.status(404).send("Driver not found");
+    return;
+  }
+
   for (const key in selectedDriver) {
     if (req.body[key]) {
       selectedDriver[key] = req.body[key];
     }
   }
-  res.status(200).send(selectedDriver)
-})
+  res.status(200).send(selectedDriver);
+});
 
-app.delete(baseAPIRoute + '/drivers/:id', (req, res) => {
+app.delete(baseAPIRoute + "/drivers/:id", (req, res) => {
   const { id } = req.params;
   const selectedDriver = drivers.find((d) => d.id === id);
 
-  const index = drivers.indexOf(selectedDriver);
-  drivers.splice(index, 1)
+  if (!selectedDriver) {
+    res.status(404).send("Driver not found");
+    return;
+  }
 
-  res.status(200).send(selectedDriver)
-})
+  const index = drivers.indexOf(selectedDriver);
+  drivers.splice(index, 1);
+
+  res.status(200).send(selectedDriver);
+});
 
 const port = 3001;
-app.listen(port, () => console.log('API rodando com sucesso')) 
+app.listen(port, () => console.log("API rodando com sucesso"));
