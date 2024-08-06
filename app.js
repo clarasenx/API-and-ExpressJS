@@ -15,5 +15,11 @@ app.get(baseAPIRoute + "/drivers/standings/:position", (req, res) => {
   res.status(200).send(selectedDriver);
 });
 
-const port = 3000;
+app.get(baseAPIRoute + "/drivers/:id", (req, res) => {
+  const { id } = req.params;
+  const selectedDriver = drivers.find((drivers) => drivers.id === id)
+  res.status(200).send(selectedDriver);
+});
+
+const port = 3001;
 app.listen(port, () => console.log('API rodando com sucesso')) 
