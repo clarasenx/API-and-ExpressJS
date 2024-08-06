@@ -2,6 +2,7 @@ import express from "express";
 import Joi from 'joi';
 import { drivers } from "./data.js";
 import { randomUUID } from 'node:crypto'
+import { join } from 'node:path';
 
 const baseAPIRoute = "/api/v1";
 
@@ -32,6 +33,18 @@ app.get(baseAPIRoute + "/drivers/:id", (req, res) => {
 });
 
 app.post(baseAPIRoute + "/drivers", (req, res) => {
+  const driverSchema = Joi.object({
+    name: Joi.string().min(3).max(50).required(),
+    time: Joi.string().min(3).max(50).required(),
+    points: Joi.number().min(0).max(1000).default(0),
+  });
+
+  const { error } = driverSchema.validate(req.body, {abortEarly: false})
+  if (error) {
+    res.status(400).send(error)
+    return
+  }
+
   const newDriver = { ...req.body, id: randomUUID() };
   drivers.push(newDriver);
   drivers.sort((b, a) => {
