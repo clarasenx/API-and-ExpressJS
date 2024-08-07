@@ -137,7 +137,7 @@ export const drivers = driversInRandomOrder.sort((b, a) => {
   return 0;
 });
 
-export const teams = driversInRandomOrder
+export const generateTeamsArray = () => driversInRandomOrder
   .reduce((acc, currentValue) => {
     const { team, points } = currentValue;
     const teamObjct = acc.find((t) => t.team === team);
