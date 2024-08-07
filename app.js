@@ -1,8 +1,7 @@
 import express from "express";
-import Joi from 'joi';
+import Joi from "joi";
+import { randomUUID } from "node:crypto";
 import { drivers } from "./data.js";
-import { randomUUID } from 'node:crypto'
-import { join } from 'node:path';
 
 const baseAPIRoute = "/api/v1";
 
@@ -15,7 +14,14 @@ app.get(baseAPIRoute + "/drivers", (req, res) => {
 });
 
 app.get(baseAPIRoute + "/drivers/standings/:position", (req, res) => {
+  const positionSchema = Joi.number().min(1).max(drivers.length);
   const { position } = req.params;
+  const { error } = positionSchema.validate(position);
+
+  if (error) {
+    res.status(400).send(error);
+    return;
+  }
   const selectedDriver = drivers[position - 1];
   res.status(200).send(selectedDriver);
 });
@@ -39,10 +45,10 @@ app.post(baseAPIRoute + "/drivers", (req, res) => {
     points: Joi.number().min(0).max(1000).default(0),
   });
 
-  const { error } = driverSchema.validate(req.body, {abortEarly: false})
+  const { error } = driverSchema.validate(req.body, { abortEarly: false });
   if (error) {
-    res.status(400).send(error)
-    return
+    res.status(400).send(error);
+    return;
   }
 
   const newDriver = { ...req.body, id: randomUUID() };
