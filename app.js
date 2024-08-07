@@ -66,6 +66,20 @@ app.post(baseAPIRoute + "/drivers", (req, res) => {
 });
 
 app.put(baseAPIRoute + "/drivers/:id", (req, res) => {
+  const updateDriverSchema = Joi.object({
+    name: Joi.string().min(3).max(50),
+    time: Joi.string().min(3).max(50),
+    points: Joi.number().min(0).max(1000),
+  }).min(1);
+
+  const { error } = updateDriverSchema.validate(req.body, {
+    abortEarly: false,
+  });
+  if (error) {
+    res.status(400).send(error);
+    return;
+  }
+
   const { id } = req.params;
   const selectedDriver = drivers.find((d) => d.id === id);
 
