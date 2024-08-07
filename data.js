@@ -132,7 +132,24 @@ export const drivers = driversInRandomOrder.sort((b, a) => {
     return 1;
   }
   if (b.points > a.points) {
-    return 1;
+    return -1;
   }
   return 0;
-})
+});
+
+export const teams = driversInRandomOrder
+  .reduce((acc, currentValue) => {
+    const { team, points } = currentValue;
+    const teamObjct = acc.find((t) => t.team === team);
+    teamObjct ? (teamObjct.points += points) : acc.push({ team, points });
+    return acc;
+  }, [])
+  .sort((b, a) => {
+    if (a.points > b.points) {
+      return 1;
+    }
+    if (b.points > a.points) {
+      return -1;
+    }
+    return 0;
+  });

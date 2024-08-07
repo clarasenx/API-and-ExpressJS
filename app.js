@@ -1,13 +1,17 @@
 import express from "express";
 import Joi from "joi";
 import { randomUUID } from "node:crypto";
-import { drivers } from "./data.js";
+import { drivers, teams } from "./data.js";
 
 const baseAPIRoute = "/api/v1";
 
 const app = express();
 
 app.use(express.json());
+
+app.get(baseAPIRoute + "/teams", (req, res) => {
+  res.status(200).send(teams);
+});
 
 app.get(baseAPIRoute + "/drivers", (req, res) => {
   res.status(200).send(drivers);
@@ -111,5 +115,5 @@ app.delete(baseAPIRoute + "/drivers/:id", (req, res) => {
   res.status(200).send(selectedDriver);
 });
 
-const port = 3001;
+const port = 3000;
 app.listen(port, () => console.log("API rodando com sucesso"));
